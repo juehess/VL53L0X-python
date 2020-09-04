@@ -19,7 +19,7 @@ setup(name='VL53L0X',
       description='VL53L0X sensor for raspberry PI/JetsonTX2',
       # author='?',
       # author_email='?',
-      url='https://github.com/pimoroni/VL53L0X_rasp_python',
+      url='https://github.com/pimoroni/VL53L0X-python',
       long_description='''
 VL53L0X sensor for raspberry PI/JetsonTX2.
 ''',
