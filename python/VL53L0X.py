@@ -22,6 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from ctypes import CDLL, CFUNCTYPE, POINTER, c_int, c_uint, pointer, c_ubyte, c_uint8, c_uint32
+import importlib
 import pkg_resources
 SMBUS='smbus'
 for dist in pkg_resources.working_set:
@@ -78,13 +79,18 @@ _I2C_READ_FUNC = CFUNCTYPE(c_int, c_ubyte, c_ubyte, POINTER(c_ubyte), c_ubyte)
 _I2C_WRITE_FUNC = CFUNCTYPE(c_int, c_ubyte, c_ubyte, POINTER(c_ubyte), c_ubyte)
 
 # Load VL53L0X shared lib
-_POSSIBLE_LIBRARY_LOCATIONS = ['../bin'] + site.getsitepackages()
+_POSSIBLE_LIBRARY_LOCATIONS = ['../bin'] + site.getsitepackages() + [site.getusersitepackages()]
+_POSSIBLE_LIBRARY_SUFFIXIES = importlib.machinery.EXTENSION_SUFFIXES
 for lib_location in _POSSIBLE_LIBRARY_LOCATIONS:
-    try:
-        _TOF_LIBRARY = CDLL(lib_location + "/vl53l0x_python.so")
-        break
-    except OSError:
-        pass
+    for suffix in _POSSIBLE_LIBRARY_SUFFIXIES:
+        try:
+            _TOF_LIBRARY = CDLL(lib_location + "/vl53l0x_python" + suffix)
+            break
+        except OSError:
+            pass
+    else:
+        continue
+    break
 else:
     raise OSError('Could not find vl53l0x_python.so')
 
