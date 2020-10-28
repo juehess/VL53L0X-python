@@ -45,9 +45,9 @@ Notes on using TCA9548A I2C Multiplexer:
 ### Installation
 ```bash
 # Python2
-pip2 install git+https://github.com/naisy/VL53L0X_rasp_python.git
+pip2 install git+https://github.com/pimoroni/VL53L0X-python.git
 # Python3
-pip3 install git+https://github.com/naisy/VL53L0X_rasp_python.git
+pip3 install git+https://github.com/pimoroni/VL53L0X-python.git
 ```
 
 ### Compilation
@@ -60,8 +60,8 @@ sudo apt-get install build-essential python-dev
 Then use following commands to clone the repository and compile:
 ```bash
 cd your_git_directory
-git clone https://github.com/naisy/VL53L0X_rasp_python.git
-cd VL53L0X_rasp_python
+git clone https://github.com/pimoroni/VL53L0X_rasp_python.git
+cd VL53L0X-python
 make
 ```
 

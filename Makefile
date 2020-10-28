@@ -50,5 +50,5 @@ $(OBJ_DIR)/%.o:%.c
 
 .PHONY: clean
 clean:
-	-${RM} -rf ./$(OUTPUT_DIR)/*  ./$(OBJ_DIR)/*
+	-${RM} -rf ./$(OUTPUT_DIR) ./$(OBJ_DIR)
 
