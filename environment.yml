@@ -1,22 +1,35 @@
 name: vl53l0x
 channels:
+  - pytorch
   - conda-forge
   - defaults
 dependencies:
+  # Build dependencies
+  - make
+  - gcc
   - python>=3.8
   - pip>=20.0
   - setuptools>=45
   - wheel
   - setuptools_scm>=6.0
+  # Runtime dependencies
+  - numpy>=1.24.4
+  - matplotlib>=3.4.3
+  - scipy>=1.7.1
+  - pytorch>=2.0.0
+  - gymnasium>=0.29.0
+  - pyglet>=1.5.16
+  # Documentation dependencies
+  - sphinx>=7.0.0
+  - sphinx-rtd-theme>=1.0.0
+  - myst-parser>=2.0.0
   # Development dependencies
   - pytest>=7.0.0
   - pytest-cov>=4.0.0
   - black>=23.0.0
   - isort>=5.0.0
   - flake8>=6.0.0
-  - sphinx>=7.0.0
-  - sphinx-rtd-theme>=1.0.0
-  - myst-parser>=2.0.0
   - pip:
     - smbus2>=0.4.1
     - -e .
+    - -e git+ssh://git@github.com/juehess/VL53L0X-python.git#egg=vl53l0x

@@ -79,3 +79,21 @@ quality: format
 	flake8 .
 	pytest
 
+.PHONY: build
+build: clean
+	@echo "🔨 Building C library..."
+	mkdir -p $(OUTPUT_DIR)
+	mkdir -p $(OBJ_DIR)
+	$(MAKE) all
+	@echo "📦 Installing Python package..."
+	pip install -e .
+
+.PHONY: env
+env:
+	@echo "🐍 Creating/updating conda environment..."
+	mamba env update -f environment.yml
+
+.PHONY: setup
+setup: env build
+	@echo "✅ Setup complete!"
+
