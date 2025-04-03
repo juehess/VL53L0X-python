@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vl53l0x"
+version = "1.0.4"
+description = "VL53L0X sensor for raspberry PI/JetsonTX2"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Juergen Hess", email = "juergen@hesspost.de" }
+]
+dependencies = [
+    "smbus2>=0.4.1",
+]
+
+[tool.setuptools]
+package-dir = {"" = "python"}
+py-modules = ["VL53L0X"]
+
+[tool.pytest.ini_options]
+addopts = "-v --cov=VL53L0X --cov-report=term-missing"
+testpaths = ["tests"]
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88

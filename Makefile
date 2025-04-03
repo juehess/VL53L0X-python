@@ -48,7 +48,34 @@ $(OBJ_DIR)/%.o:%.c
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(PYTHON_INCLUDES) $(INCLUDES) $< -o $@
 
-.PHONY: clean
+.PHONY: clean test format quality docs docs-serve
+
 clean:
-	-${RM} -rf ./$(OUTPUT_DIR) ./$(OBJ_DIR)
+	@echo "🧹 Cleaning up..."
+	find . -type d -name "__pycache__" -exec rm -r {} +
+	find . -type f -name "*.pyc" -delete
+	find . -type f -name "*.pyo" -delete
+	find . -type f -name "*.pyd" -delete
+	find . -type f -name ".coverage" -delete
+	find . -type d -name "*.egg-info" -exec rm -r {} +
+	find . -type d -name "*.egg" -exec rm -r {} +
+	find . -type d -name ".pytest_cache" -exec rm -r {} +
+	find . -type d -name ".eggs" -exec rm -r {} +
+	find . -type d -name "build" -exec rm -r {} +
+	find . -type d -name "dist" -exec rm -r {} +
+	rm -rf docs/_build/
+
+test:
+	@echo "🧪 Running tests..."
+	pytest
+
+format:
+	@echo "✨ Formatting code..."
+	isort .
+	black .
+
+quality: format
+	@echo "🔍 Checking code quality..."
+	flake8 .
+	pytest
 

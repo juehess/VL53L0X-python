@@ -1,0 +1,22 @@
+name: vl53l0x
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python>=3.8
+  - pip>=20.0
+  - setuptools>=45
+  - wheel
+  - setuptools_scm>=6.0
+  # Development dependencies
+  - pytest>=7.0.0
+  - pytest-cov>=4.0.0
+  - black>=23.0.0
+  - isort>=5.0.0
+  - flake8>=6.0.0
+  - sphinx>=7.0.0
+  - sphinx-rtd-theme>=1.0.0
+  - myst-parser>=2.0.0
+  - pip:
+    - smbus2>=0.4.1
+    - -e .

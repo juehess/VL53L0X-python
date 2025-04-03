@@ -1,83 +1,143 @@
-# VL53L0X Python interface on Raspberry Pi/Jetson TX2
+# VL53L0X Python interface
 
-This project provides a simplified python interface on Raspberry Pi to the ST VL53L0X API (ST Microelectronics).
+This project provides a simplified Python interface to the ST VL53L0X API (ST Microelectronics) for distance sensing. It's particularly useful for robotics applications like the inverted pendulum project.
 
-Patterned after the cassou/VL53L0X_rasp repository (https://github.com/cassou/VL53L0X_rasp.git)
+This is a fork of [pimoroni/VL53L0X-python](https://github.com/pimoroni/VL53L0X-python), modernized with current Python packaging standards and additional features.
 
-In order to be able to share the i2c bus with other python code that uses the i2c bus, this library implements the VL53L0X platform specific i2c functions through callbacks to the python smbus interface. 
+## Features
 
-Version 1.0.2:
-- Add support for TCA9548A I2C Multiplexer. Tested with https://www.adafruit.com/products/2717 breakout. (johnbryanmoore)
-- Add python example using TCA9548A Multiplexer support (johnbryanmoore)
-- Add pip install support (grantramsay)
-- Add smbus2 support (grantramsay)
-- **Update pip install support python2/3 (naisy)**
-- **Update smbus/smbus2 support (naisy)**
-- **Add gcc -fPIC CFLAGS for build on Ubuntu (naisy)**
-- **Add I2C address change support (naisy)**
+- Simple Python interface to VL53L0X sensor
+- Support for multiple sensors on the same bus
+- TCA9548A I2C Multiplexer support
+- Comprehensive test suite
+- Modern Python packaging
 
-Version 1.0.1:
-- Simplify build process (svanimisetti)
-- Add python example that graphs the sensor output (svanimisetti)
-- Update the build instructions (svanimisetti, johnbryanmoore)
+## Installation
 
-Version 1.0.0:
-- Add support for multiple sensors on the same bus utilizing the ST API call to change the address of the device.
-- Add support for improved error checking such as I/O error detection on I2C access.
+### Using pip
 
-Version 0.0.9:
-- initial version and only supports 1 sensor with limited error checking.
-
-Notes on Multiple sensor support:
-- In order to have multiple sensors on the same bus, you must have the shutdown pin of each sensor tied to individual GPIO's so that they can be individually enabled and the addresses set.
-- Both the Adafruit and Pololu boards for VL53L0X have I2C pull ups on the board. Because of this, the number of boards that can be added will be limited to only about 5 or 6 before the pull-up becomes too strong.
-- Changes to the platform and python_lib c code allow for up to 16 sensors.
-- Address changes are volatile so setting the shutdown pin low or removing power will change the address back to the default 0x29.
-
-Notes on using TCA9548A I2C Multiplexer:
-- If limited on GPIO's that would be needed to set a new addresses for each sensor, using a TCA9548A I2C Multiplexer is a good option since it allows using up to 8 sensors without using GPIO's.
-- The TCA9548A is also a good option if using multiple boards on the same I2C bus and the total of all the combined I2C pullups would cause the bus not to function. 
-- Theoretically you can connect multiple TCA9548A Multiplexers, each with up to 8 sensors as long each TCA9548A has a different address. This has not been tested but should work in theory.
-
-(Please note that while the author is an embedded software engineer, this is a first attempt at extending python and the author is by no means a python expert so any improvement suggestions are appreciated).
-
-
-### Installation
 ```bash
-# Python2
-pip2 install git+https://github.com/pimoroni/VL53L0X-python.git
-# Python3
-pip3 install git+https://github.com/pimoroni/VL53L0X-python.git
+pip install git+ssh://git@github.com/juehess/VL53L0X-python.git
 ```
 
-### Compilation
+### Development Setup
 
-* To build on raspberry pi, first make sure you have the right tools and development libraries:
+1. Clone the repository:
+```bash
+git clone git@github.com:juehess/VL53L0X-python.git
+cd VL53L0X-python
+```
+
+2. Create and activate the conda environment:
+```bash
+mamba env create -f environment.yml
+mamba activate vl53l0x
+```
+
+3. Install in development mode:
+```bash
+pip install -e .
+```
+
+### Building from Source
+
+First, ensure you have the required build tools:
 ```bash
 sudo apt-get install build-essential python-dev
 ```
 
-Then use following commands to clone the repository and compile:
+Then compile the C library:
 ```bash
-cd your_git_directory
-git clone https://github.com/pimoroni/VL53L0X_rasp_python.git
-cd VL53L0X-python
 make
 ```
 
-* In the Python directory are the following python files:
+## Development
 
-VL53L0X.py - This contains the python ctypes interface to the ST Library
+### Running Tests
+```bash
+make test
+```
 
-VL53L0X_example.py - This example accesses a single sensor with the default address.
+### Code Quality
+```bash
+make quality
+```
 
-VL53L0X_example_livegraph.py - This example plots the distance data from a single sensor in a live graph. This example requires matplotlib. Use `sudo pip install matplotlib` to install matplotlib.
+### Building Documentation
+```bash
+make docs
+```
 
-VL53L0X_multi_example.py - This example accesses 2 sensors, setting the first to address 0x2B and the second to address 0x2D. It uses GPIOs 20 and 16 connected to the shutdown pins on the 2 sensors to control sensor activation.
+## Usage Examples
 
-![VL53L0X_multi_example.py Diagram](https://raw.githubusercontent.com/johnbryanmoore/VL53L0X_rasp_python/master/VL53L0X_Mutli_Rpi3_bb.jpg "Fritzing Diagram for VL53L0X_multi_example.py")
+### Basic Usage
+```python
+import VL53L0X
 
-VL53L0X_TCA9548A_example.py - This example accesses 2 sensors through a TCA9548A I2C Multiplexer with the first connected to bus 1 and the second on bus 2 on the TCA9548A.
+# Create a VL53L0X object
+tof = VL53L0X.VL53L0X(i2c_bus=1, i2c_address=0x29)
 
-![VL53L0X_TCA9548A_example.py Diagram](https://raw.githubusercontent.com/johnbryanmoore/VL53L0X_rasp_python/master/VL53L0X_TCA9548A_Rpi3_bb.jpg "Fritzing Diagram for VL53L0X_TCA9548A_example.py")
+# Start ranging
+tof.open()
+tof.start_ranging(VL53L0X.Vl53l0xAccuracyMode.BETTER)
+
+# Get distance
+distance = tof.get_distance()
+print(f"Distance: {distance}mm")
+
+# Stop ranging
+tof.stop_ranging()
+tof.close()
+```
+
+### Multiple Sensors
+The library supports multiple sensors through:
+1. Address changes (volatile)
+2. TCA9548A I2C Multiplexer support
+
+For detailed examples, see the `examples` directory.
+
+## Hardware Setup
+
+### Single Sensor
+- Connect VCC to 3.3V
+- Connect GND to Ground
+- Connect SCL to SCL (GPIO 3)
+- Connect SDA to SDA (GPIO 2)
+
+### Multiple Sensors
+When using multiple sensors, you can either:
+1. Use separate GPIO pins for each sensor's XSHUT pin
+2. Use a TCA9548A I2C Multiplexer
+
+See the examples directory for detailed wiring diagrams.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run the tests (`make test`)
+5. Run quality checks (`make quality`)
+6. Submit a pull request
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Version History
+
+### 1.0.4
+- Modernized Python packaging
+- Added comprehensive test suite
+- Added development tools (black, isort, flake8)
+- Added documentation
+
+[Previous versions...]
+
+## Notes
+
+- Address changes are volatile - setting the shutdown pin low or removing power will reset the address to the default 0x29
+- When using multiple sensors directly on the I2C bus, the number of devices is limited by the combined pull-up resistors
+- TCA9548A Multiplexer is recommended for multiple sensor setups
 
